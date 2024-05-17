@@ -1,9 +1,14 @@
 module libk.util.mboot;
 
+alias multiboot_uint8_t = ubyte;
+alias multiboot_uint16_t = ushort;
+alias multiboot_uint32_t = uint;
+alias multiboot_uint64_t = ulong;
+
 enum MultibootHeaderMagic = 0x1BADB002;
 enum MultibootLoaderMagic = 0x2BADB002;
 
-enum MultibootHeaderFlags : uint
+enum MultibootHeaderFlags : multiboot_uint32_t
 {
     pageAlign  = 1 << 0,
     memoryInfo = 1 << 1,
@@ -14,27 +19,27 @@ enum MultibootHeaderFlags : uint
 struct MultibootHeader
 {
 align(1):
-    uint magic;
-    uint flags;
-    uint checksum;
+    multiboot_uint32_t magic;
+    multiboot_uint32_t flags;
+    multiboot_uint32_t checksum;
 
     // Fields for AOUT kludge (flags[16] == 1)
-    uint headerAddress;
-    uint loadAddress;
-    uint loadEndAddress;
-    uint bssEndAddress;
-    uint entryAddress;
+    multiboot_uint32_t headerAddress;
+    multiboot_uint32_t loadAddress;
+    multiboot_uint32_t loadEndAddress;
+    multiboot_uint32_t bssEndAddress;
+    multiboot_uint32_t entryAddress;
 
     // Fields for video mode (flags[2] == 1)
-    uint modeType;
-    uint width;
-    uint height;
-    uint depth;
+    multiboot_uint32_t modeType;
+    multiboot_uint32_t width;
+    multiboot_uint32_t height;
+    multiboot_uint32_t depth;
 }
 
 static assert(MultibootHeader.sizeof == 48);
 
-enum MultibootInfoFlags : uint
+enum MultibootInfoFlags : multiboot_uint32_t
 {
     memoryInfo       = 1 << 0,
     bootDevice       = 1 << 1,
@@ -51,81 +56,88 @@ enum MultibootInfoFlags : uint
     framebufferInfo  = 1 << 12,
 }
 
+enum MultibootFramebufferType : multiboot_uint8_t
+{
+    indexed = 0,
+    rgb     = 1,
+    egaText = 2,
+}
+
 struct MultibootInfo
 {
 align(1):
-    uint flags;
+    multiboot_uint32_t flags;
 
     // Available memory from BIOS
-    uint memLower;
-    uint memUpper;
+    multiboot_uint32_t memLower;
+    multiboot_uint32_t memUpper;
 
     // "root" partition
-    uint bootDevice;
+    multiboot_uint32_t bootDevice;
 
     // Kernel command line
-    uint cmdline;
+    multiboot_uint32_t cmdline;
 
     // Boot modules
-    uint modsCount;
-    uint modsAddr;
+    multiboot_uint32_t modulesCount;
+    multiboot_uint32_t modulesAddress;
 
     union
     {
         // ELF section header table
-        uint[4] symbols;
+        multiboot_uint32_t[4] symbols;
         MultibootAOutSymbolTable aoutSymbolTable;
         MultibootElfSectionHeaderTable elfSectionHeaderTable;
     }
 
     // Memory map buffer
-    uint mmapLength;
-    uint mmapAddr;
+    multiboot_uint32_t mmapLength;
+    multiboot_uint32_t mmapAddress;
 
     // Drives information
-    uint drivesLength;
-    uint drivesAddr;
+    multiboot_uint32_t drivesLength;
+    multiboot_uint32_t drivesAddress;
 
     // ROM configuration table
-    uint configTable;
+    multiboot_uint32_t configTable;
 
     // String containing the boot loader name
-    uint bootLoaderName;
+    multiboot_uint32_t bootLoaderName;
 
     // APM table
-    uint apmTable;
+    multiboot_uint32_t apmTable;
 
     // Video information
-    uint vbeControlInfo;
-    uint vbeModeInfo;
-    ushort vbeMode;
-    ushort vbeInterfaceSeg;
-    ushort vbeInterfaceOff;
-    ushort vbeInterfaceLen;
+    multiboot_uint32_t vbeControlInfo;
+    multiboot_uint32_t vbeModeInfo;
+    multiboot_uint16_t vbeMode;
+    multiboot_uint16_t vbeInterfaceSeg;
+    multiboot_uint16_t vbeInterfaceOff;
+    multiboot_uint16_t vbeInterfaceLen;
 
     // Framebuffer information
-    ulong framebufferAddr;
-    uint framebufferPitch;
-    uint framebufferWidth;
-    uint framebufferHeight;
-    ubyte framebufferBpp;
-    ubyte framebufferType;
+    multiboot_uint64_t framebufferAddress;
+    multiboot_uint32_t framebufferPitch;
+    multiboot_uint32_t framebufferWidth;
+    multiboot_uint32_t framebufferHeight;
+    multiboot_uint8_t framebufferBpp;
+    MultibootFramebufferType framebufferType;
     union
     {
-        ubyte[6] colorInfo;
+        multiboot_uint8_t[6] colorInfo;
         struct
         {
-            ubyte framebufferRedFieldPosition;
-            ubyte framebufferRedMaskSize;
-            ubyte framebufferGreenFieldPosition;
-            ubyte framebufferGreenMaskSize;
-            ubyte framebufferBlueFieldPosition;
-            ubyte framebufferBlueMaskSize;
+            multiboot_uint8_t framebufferRedFieldPosition;
+            multiboot_uint8_t framebufferRedMaskSize;
+            multiboot_uint8_t framebufferGreenFieldPosition;
+            multiboot_uint8_t framebufferGreenMaskSize;
+            multiboot_uint8_t framebufferBlueFieldPosition;
+            multiboot_uint8_t framebufferBlueMaskSize;
         }
         struct
         {
-            uint framebufferPaletteAddr;
-            ushort framebufferPaletteNumColors;
+            multiboot_uint32_t framebufferPaletteAddr;
+            multiboot_uint16_t framebufferPaletteNumColors;
         }
     }
 }
@@ -133,10 +145,10 @@ align(1):
 struct MultibootAOutSymbolTable
 {
 align(1):
-    uint tabSize;
-    uint strSize;
-    uint addr;
-    uint reserved;
+    multiboot_uint32_t tabSize;
+    multiboot_uint32_t strSize;
+    multiboot_uint32_t address;
+    multiboot_uint32_t reserved;
 }
 
 static assert(MultibootAOutSymbolTable.sizeof == 16);
@@ -144,51 +156,57 @@ static assert(MultibootAOutSymbolTable.sizeof == 16);
 struct MultibootElfSectionHeaderTable
 {
 align(1):
-    uint num;
-    uint size;
-    uint addr;
-    uint shndx;
+    multiboot_uint32_t num;
+    multiboot_uint32_t size;
+    multiboot_uint32_t address;
+    multiboot_uint32_t index;
 }
 
 static assert(MultibootElfSectionHeaderTable.sizeof == 16);
 
-enum MemoryMapEntryType : uint
+enum MultibootMMapEntryType : multiboot_uint32_t
 {
-    available = 1,
-    reserved  = 2,
+    available       = 1,
+    reserved        = 2,
     acpiReclaimable = 3,
-    acpiNVS = 4,
-    badMemory = 5,
+    acpiNVS         = 4,
+    badMemory       = 5,
 }
 
-struct MultibootMemoryMapEntry
+struct MultibootMMapEntry
 {
 align(1):
-    uint size;
-    ulong baseAddr;
-    ulong length;
-    MemoryMapEntryType type;
+    multiboot_uint32_t size;
+    multiboot_uint64_t baseAddress;
+    multiboot_uint64_t length;
+    MultibootMMapEntryType type;
 }
+
+static assert(MultibootMMapEntry.sizeof == 24);
 
 struct MultibootModuleList
 {
 align(1):
-    uint modStart;
-    uint modEnd;
-    uint cmdline;
-    uint reserved;
+    multiboot_uint32_t moduleStart;
+    multiboot_uint32_t moduleEnd;
+    multiboot_uint32_t cmdline;
+    multiboot_uint32_t reserved;
 }
+
+static assert(MultibootModuleList.sizeof == 16);
 
 struct MultibootAPMInfo
 {
 align(1):
-    ushort version_;
-    ushort cseg;
-    uint offset;
-    ushort cseg16;
-    ushort dseg;
-    ushort flags;
-    ushort csegLen;
-    ushort cseg16Len;
-    ushort dsegLen;
+    multiboot_uint16_t version_;
+    multiboot_uint16_t cseg;
+    multiboot_uint32_t offset;
+    multiboot_uint16_t cseg16;
+    multiboot_uint16_t dseg;
+    multiboot_uint16_t flags;
+    multiboot_uint16_t csegLen;
+    multiboot_uint16_t cseg16Len;
+    multiboot_uint16_t dsegLen;
 }
+
+static assert(MultibootAPMInfo.sizeof == 20);
