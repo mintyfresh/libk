@@ -10,3 +10,51 @@ enum bool isInteger(T) = isSigned!(T) || isUnsigned!(T);
 enum bool isSigned(T) = is(T == byte) || is(T == short) || is(T == int) || is(T == long);
 enum bool isUnsigned(T) = is(T == ubyte) || is(T == ushort) || is(T == uint) || is(T == ulong);
 enum bool isCharacter(T) = is(T == char) || is(T == wchar) || is(T == dchar);
+
+template Signed(T) if (isUnsigned!T)
+{
+    static if (is(T == ubyte))
+    {
+        alias Signed = byte;
+    }
+    else static if (is(T == ushort))
+    {
+        alias Signed = short;
+    }
+    else static if (is(T == uint))
+    {
+        alias Signed = int;
+    }
+    else static if (is(T == ulong))
+    {
+        alias Signed = long;
+    }
+    else
+    {
+        static assert(0, "Signed type not found for " ~ T.stringof);
+    }
+}
+
+template Unsigned(T) if (isSigned!T)
+{
+    static if (is(T == byte))
+    {
+        alias Unsigned = ubyte;
+    }
+    else static if (is(T == short))
+    {
+        alias Unsigned = ushort;
+    }
+    else static if (is(T == int))
+    {
+        alias Unsigned = uint;
+    }
+    else static if (is(T == long))
+    {
+        alias Unsigned = ulong;
+    }
+    else
+    {
+        static assert(0, "Unsigned type not found for " ~ T.stringof);
+    }
+}
