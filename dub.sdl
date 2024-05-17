@@ -1,0 +1,10 @@
+name "libk"
+description "Kernel libraries in D, tested in isolation."
+authors "Minty Fresh"
+copyright "Copyright © 2024, Minty Fresh"
+license "BSL-1.0"
+
+buildOptions "betterC"
+
+targetName "k"
+targetType "library"
