@@ -55,14 +55,7 @@ void toString(T)(T value, ref ToStringBuffer!T buffer, int base) if (isInteger!T
     }
 
     buffer[index] = '\0';
-
-    // Reverse the string
-    foreach (i; 0..index / 2)
-    {
-        char temp = buffer[i];
-        buffer[i] = buffer[index - i - 1];
-        buffer[index - i - 1] = temp;
-    }
+    buffer[0..index].reverse;
 }
 
 ToStringBuffer!T toString(T)(T value, int base) if (isInteger!T)
@@ -103,4 +96,53 @@ unittest
 
     longBuffer = toString(long.min, 10);
     assert(strcmp(longBuffer.ptr, "-9223372036854775808") == 0);
+}
+
+@property
+size_t length(T)(T* str) nothrow @nogc
+    if (isCharacter!T)
+{
+    if (str is null)
+    {
+        return 0;
+    }
+
+    size_t len = 0;
+
+    while (str[len] != '\0')
+    {
+        len++;
+    }
+
+    return len;
+}
+
+@property
+T* reverse(T)(T* str) nothrow @nogc if (isCharacter!T)
+{
+    size_t len = str.length;
+
+    foreach(i; 0..len / 2)
+    {
+        T temp = str[i];
+        str[i] = str[len - i - 1];
+        str[len - i - 1] = temp;
+    }
+
+    return str;
+}
+
+@property
+T[] reverse(T)(T[] str) nothrow @nogc if (isCharacter!T)
+{
+    size_t len = str.length;
+
+    foreach(i; 0..len / 2)
+    {
+        T temp = str[i];
+        str[i] = str[len - i - 1];
+        str[len - i - 1] = temp;
+    }
+
+    return str;
 }
