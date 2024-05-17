@@ -6,10 +6,17 @@ enum alphadigits = "0123456789abcdefghijklmnopqrstuvwxyz";
 enum int minBase = 2;
 enum int maxBase = alphadigits.length;
 
-enum size_t intToStringSize(T) = (8 * T.sizeof) + 1;
-alias IntToStringBuffer(T) = char[intToStringSize!T];
+template toStringLength(T) if (isInteger!T)
+{
+    enum size_t toStringLength = (8 * T.sizeof) + 1;
+}
 
-void toString(T)(T value, ref IntToStringBuffer!T buffer, int base) if (isInteger!T)
+template ToStringBuffer(T) if (isInteger!T)
+{
+    alias ToStringBuffer = char[toStringLength!T];
+}
+
+void toString(T)(T value, ref ToStringBuffer!T buffer, int base) if (isInteger!T)
 {
     if (base < minBase || base > maxBase)
     {
@@ -58,9 +65,9 @@ void toString(T)(T value, ref IntToStringBuffer!T buffer, int base) if (isIntege
     }
 }
 
-IntToStringBuffer!T toString(T)(T value, int base) if (isInteger!T)
+ToStringBuffer!T toString(T)(T value, int base) if (isInteger!T)
 {
-    IntToStringBuffer!T buffer;
+    ToStringBuffer!T buffer;
 
     toString!T(value, buffer, base);
 
@@ -75,7 +82,7 @@ version (unittest)
 
 unittest
 {
-    IntToStringBuffer!int intBuffer;
+    ToStringBuffer!int intBuffer;
 
     intBuffer = toString(12_345, 10);
     assert(strcmp(intBuffer.ptr, "12345") == 0);
@@ -89,7 +96,7 @@ unittest
     intBuffer = toString(0b10101100, 2);
     assert(strcmp(intBuffer.ptr, "10101100") == 0);
 
-    IntToStringBuffer!long longBuffer;
+    ToStringBuffer!long longBuffer;
 
     longBuffer = toString(0x12345678_9ABCDEF0UL, 16);
     assert(strcmp(longBuffer.ptr, "123456789abcdef0") == 0);

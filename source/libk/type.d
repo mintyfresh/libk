@@ -6,10 +6,14 @@ enum bool isCString(T) = is(T == char*) || is(T == const(char)*) || is(T == immu
                          is(T == dchar*) || is(T == const(dchar)*) || is(T == immutable(dchar)*);
 enum bool isDString(T) = is(T == string) || is(T == wstring) || is(T == dstring);
 
+enum bool isNumeric(T) = isInteger!(T) || isFloatingPoint!(T);
+
 enum bool isInteger(T) = isSigned!(T) || isUnsigned!(T);
 enum bool isSigned(T) = is(T == byte) || is(T == short) || is(T == int) || is(T == long);
 enum bool isUnsigned(T) = is(T == ubyte) || is(T == ushort) || is(T == uint) || is(T == ulong);
 enum bool isCharacter(T) = is(T == char) || is(T == wchar) || is(T == dchar);
+
+enum bool isFloatingPoint(T) = is(T == float) || is(T == double) || is(T == real);
 
 template Signed(T) if (isUnsigned!T)
 {
