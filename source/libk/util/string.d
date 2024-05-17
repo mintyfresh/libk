@@ -1,6 +1,6 @@
-module libk.string;
+module libk.util.string;
 
-import libk.type;
+import libk.util.type;
 
 enum alphadigits = "0123456789abcdefghijklmnopqrstuvwxyz";
 enum int minBase = 2;

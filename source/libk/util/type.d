@@ -1,4 +1,4 @@
-module libk.type;
+module libk.util.type;
 
 enum bool isString(T) = isCString!(T) || isDString!(T);
 enum bool isCString(T) = is(T == char*) || is(T == const(char)*) || is(T == immutable(char)*) ||

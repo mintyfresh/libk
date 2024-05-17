@@ -1,6 +1,6 @@
-module libk.bitmap;
+module libk.util.bitmap;
 
-import libk.type;
+import libk.util.type;
 
 enum BitmapInit
 {
