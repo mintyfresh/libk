@@ -10,14 +10,14 @@ enum BitmapInit
 
 struct Bitmap(T) if (isUnsigned!(T))
 {
+    enum size_t bitsPerBlock = 8 * T.sizeof;
+
 private:
     T* _blocks;
-    const size_t _totalBlocks;
-    const size_t _totalBits;
+    size_t _totalBlocks;
+    size_t _totalBits;
     size_t _freeBits;
     size_t _firstFree;
-
-    enum size_t bitsPerBlock = 8 * T.sizeof;
 
     enum T fullyAvailable = 0;
     enum T fullyReserved = T.max;
