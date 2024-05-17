@@ -352,31 +352,37 @@ public:
     }
 
 private:
+    pragma(inline, true)
     bool isBitReserved(block_t block, bit_t bit) const nothrow @nogc
     {
         return (_blocks[block] & (T(1) << bit)) != 0;
     }
 
+    pragma(inline, true)
     void reserveBit(block_t block, bit_t bit) nothrow @nogc
     {
         _blocks[block] |= (T(1) << bit);
     }
 
+    pragma(inline, true)
     void releaseBit(block_t block, bit_t bit) nothrow @nogc
     {
         _blocks[block] &= ~(T(1) << bit);
     }
 
+    pragma(inline, true)
     block_t indexToBlock(size_t index) const pure nothrow @nogc
     {
         return index / bitsPerBlock;
     }
 
+    pragma(inline, true)
     bit_t indexToBit(size_t index) const pure nothrow @nogc
     {
         return index % bitsPerBlock;
     }
 
+    pragma(inline, true)
     size_t blockBitToIndex(block_t block, bit_t bit) const pure nothrow @nogc
     {
         return block * bitsPerBlock + bit;
