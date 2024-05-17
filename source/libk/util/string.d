@@ -40,7 +40,7 @@ void toString(T)(T value, ref ToStringBuffer!T buffer, int base) if (isInteger!T
 
     do
     {
-        char digit = alphadigits[v % base];
+        char digit = alphadigits[cast(size_t)(v % base)];
         buffer[index++] = digit;
         v /= base;
     }
